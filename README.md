@@ -19,3 +19,8 @@ Appliquer au cluster
 ```bash
   kubectl apply -k overlays/production/
 ```
+
+Supprime proprement tous les objets gérés par ce kustomization
+```bash
+  kubectl delete -k overlays/production/
+```
