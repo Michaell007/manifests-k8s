@@ -1,0 +1,27 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: production
+
+# Importer tout le base
+resources:
+  - ../../base/
+
+# Modifier les images en prod
+# images:
+#   - name: backend
+#     newTag: "1.0.0"
+#   - name: frontend
+#     newTag: "1.0.0"
+
+# Patches prod
+# patches:
+#   - target:
+#       kind: Deployment
+#       name: backend-deployment
+#     path: patch-backend-resources.yaml
+
+#   - target:
+#       kind: Deployment
+#       name: frontend-deployment
+#     path: patch-frontend-replicas.yaml
