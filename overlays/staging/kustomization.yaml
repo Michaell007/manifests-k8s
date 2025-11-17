@@ -5,7 +5,7 @@ namespace: production
 
 # Importer tout le base
 resources:
-  - ../../base/
+  - ../../base
 
 # Modifier les images en prod
 # images:
