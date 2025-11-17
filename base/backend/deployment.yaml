@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  namespace: production
+  labels:
+    app: backend
+    tier: api
+spec:
+  # Nombre de réplicas pour la haute disponibilité
+  replicas: 2
+  
+  # Stratégie de mise à jour : Rolling Update
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1        # Pods supplémentaires pendant la mise à jour
+      maxUnavailable: 0  # Garantit zéro downtime
+  
+  # Sélecteur pour identifier les pods
+  selector:
+    matchLabels:
+      app: backend
+      tier: api
+  
+  template:
+    metadata:
+      labels:
+        app: backend
+        tier: api
+    spec: 
+      containers:
+      - name: backend
+        image: votre-registry/backend-nodejs:1.0.0
+        imagePullPolicy: Always
+        
+        ports:
+        - containerPort: 3000
+          name: http
+          protocol: TCP
+        
+        # Variables d'environnement depuis ConfigMap
+        envFrom:
+        - configMapRef:
+            name: backend-config
+        
+        # Variables d'environnement depuis Secret
+        env:
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: backend-secret
+              key: AZ_USER
+        
+        # Ressources allouées (IMPORTANT pour la stabilité)
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        
+        # Health checks
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        
+        # Sécurité
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
