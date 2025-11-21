@@ -27,6 +27,6 @@ kubectl delete -k overlays/production
 
 Forcer un redéploiement des pods
 ```bash
-kubectl rollout restart deployment backend -n staging
-kubectl rollout restart deployment frontend -n staging
+kubectl rollout restart deployment backend -n production
+kubectl rollout restart deployment frontend -n production
 ```
